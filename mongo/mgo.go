@@ -30,6 +30,12 @@ var (
 		connGcSecond)
 )
 
+// param:
+// user : connection's username
+// password : connection's password
+// connect : connection's addr ----format like "127.0.0.1:27017/dbname"
+// connCAP : max size of the pool
+// gcSeconds : idl time of the per link
 func Refresh(user, password, connect string, connCAP, gcSeconds int) {
 	connGcSecond = time.Duration(gcSeconds) * 1e9
 

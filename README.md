@@ -17,7 +17,14 @@ import (
 )
 
 func main() {
-    //
+
+    // init first
+    // param explain:
+    // 1 : connection's username
+    // 2 : connection's password
+    // 3 : connection's addr ----format like "127.0.0.1:27017/dbname"
+    // 4 : max size of the pool
+    // 5 : idl time of the per link
 	mongo.Refresh("dbUser","dbPassword","dbConnect",1000,100)
 
 	defer db.Close()
