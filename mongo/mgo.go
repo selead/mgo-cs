@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/spf13/viper"
 	"github.com/spiderorg/logrus"
 	mgo "gopkg.in/mgo.v2"
 
@@ -16,12 +15,12 @@ type MgoSrc struct {
 }
 
 var (
-	connGcSecond = time.Duration(viper.GetInt("database.mongodb.gcSeconds")) * 1e9
+	connGcSecond = time.Duration(100) * 1e9
 	session      *mgo.Session
 	err          error
 	MgoPool      = pool.ClassicPool(
-		viper.GetInt("database.mongodb.connCAP"),
-		viper.GetInt("database.mongodb.connCAP")/5,
+		1000,
+		200,
 		func() (pool.Src, error) {
 			// if err != nil || session.Ping() != nil {
 			// 	session, err = newSession()
@@ -31,19 +30,32 @@ var (
 		connGcSecond)
 )
 
-func Refresh() {
-	url := fmt.Sprintf("mongodb://%s:%s@%s", viper.GetString("database.mongodb.user"),
-		viper.GetString("database.mongodb.password"),
-		viper.GetString("database.mongodb.connect"),
+func Refresh(user, password, connect string, connCAP, gcSeconds int) {
+	connGcSecond = time.Duration(gcSeconds) * 1e9
+
+	MgoPool = pool.ClassicPool(
+		connCAP,
+		connCAP/5,
+		func() (pool.Src, error) {
+			// if err != nil || session.Ping() != nil {
+			// 	session, err = newSession()
+			// }
+			return &MgoSrc{session.Clone()}, err
+		},
+		connGcSecond)
+
+	url := fmt.Sprintf("mongodb://%s:%s@%s", user,
+		password,
+		connect,
 	)
 
 	session, err = mgo.Dial(url)
 	if err != nil {
-		logrus.Fatalln("MongoDB", err, "|", viper.GetString("database.mongodb.connect"))
+		logrus.Fatalln("MongoDB", err, "|", connect)
 	} else if err = session.Ping(); err != nil {
-		logrus.Fatalln("MongoDB", err, "|", viper.GetString("database.mongodb.connect"))
+		logrus.Fatalln("MongoDB", err, "|", connect)
 	} else {
-		session.SetPoolLimit(viper.GetInt("database.mongodb.connCAP"))
+		session.SetPoolLimit(connCAP)
 	}
 	logrus.Infoln("To open mongo is ok.")
 }
