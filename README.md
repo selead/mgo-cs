@@ -13,7 +13,7 @@ A mongodb-pool tool base on go-mgo
 import (
 	"log"
 
-	mongo "github.com/spiderorg/mgo-cs"
+	"github.com/spiderorg/mgo-cs/mongo"
 )
 
 func main() {
