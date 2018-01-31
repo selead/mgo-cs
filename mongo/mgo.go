@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/spiderorg/logrus"
 	mgo "gopkg.in/mgo.v2"
 
+	"github.com/sirupsen/logrus"
 	"github.com/spiderorg/mgo-cs/pool"
 )
 
