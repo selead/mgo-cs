@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"strings"
 )
@@ -26,7 +25,6 @@ func Mgo(resultPtr interface{}, operate string, option map[string]interface{}) e
 		if value == (reflect.Value{}) || !value.CanSet() {
 			continue
 		}
-		fmt.Println(reflect.ValueOf(val), "------")
 		value.Set(reflect.ValueOf(val))
 	}
 
